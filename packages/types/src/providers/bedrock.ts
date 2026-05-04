@@ -167,6 +167,21 @@ export const bedrockModels = {
 			},
 		],
 	},
+	"anthropic.claude-opus-4-7": {
+		maxTokens: 8192,
+		contextWindow: 1_000_000, // 1M tokens native context window
+		supportsImages: true,
+		supportsPromptCache: true,
+		supportsReasoningBudget: true,
+		inputPrice: 5.5, // $5.50 per million input tokens
+		outputPrice: 27.5, // $27.50 per million output tokens
+		cacheWritesPrice: 6.875, // $6.88 per million tokens (1.25x input)
+		cacheReadsPrice: 0.55, // $0.55 per million tokens (10% of input)
+		minTokensPerCachePoint: 1024,
+		maxCachePoints: 4,
+		cachableFields: ["system", "messages", "tools"],
+		description: "Claude Opus 4.7 - Released April 16, 2026 with 1M native context window",
+	},
 	"anthropic.claude-opus-4-5-20251101-v1:0": {
 		maxTokens: 8192,
 		contextWindow: 200_000,
@@ -525,16 +540,18 @@ export const BEDROCK_1M_CONTEXT_MODEL_IDS = [
 	"anthropic.claude-sonnet-4-5-20250929-v1:0",
 	"anthropic.claude-sonnet-4-6",
 	"anthropic.claude-opus-4-6-v1",
+	"anthropic.claude-opus-4-7",
 ] as const
 
 // Amazon Bedrock models that support Global Inference profiles
-// As of Nov 2025, AWS supports Global Inference for:
+// As of April 2026, AWS supports Global Inference for:
 // - Claude Sonnet 4
 // - Claude Sonnet 4.5
 // - Claude Sonnet 4.6
 // - Claude Haiku 4.5
 // - Claude Opus 4.5
 // - Claude Opus 4.6
+// - Claude Opus 4.7
 export const BEDROCK_GLOBAL_INFERENCE_MODEL_IDS = [
 	"anthropic.claude-sonnet-4-20250514-v1:0",
 	"anthropic.claude-sonnet-4-5-20250929-v1:0",
@@ -542,6 +559,7 @@ export const BEDROCK_GLOBAL_INFERENCE_MODEL_IDS = [
 	"anthropic.claude-haiku-4-5-20251001-v1:0",
 	"anthropic.claude-opus-4-5-20251101-v1:0",
 	"anthropic.claude-opus-4-6-v1",
+	"anthropic.claude-opus-4-7",
 ] as const
 
 // Amazon Bedrock Service Tier types

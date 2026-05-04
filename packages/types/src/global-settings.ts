@@ -254,7 +254,7 @@ export const globalSettingsSchema = z.object({
 
 	/**
 	 * Zoo Code API key for subscription features (smart compression).
-	 * Stored in VS Code SecretStorage — never in global state.
+	 * Stored in VS Code SecretStorage via GLOBAL_SECRET_KEYS.
 	 * Generate at https://zoocode.dev/dashboard/api-tokens
 	 */
 	zooCodeApiKey: z.string().optional(),

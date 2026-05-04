@@ -95,7 +95,7 @@ export function assembleEnvironmentDetails(sections: Map<string, string>, wasFil
 
 	if (wasFiltered) {
 		parts.push(
-			"(Unchanged environment sections omitted from this turn. Use tools to check current state if needed.)",
+			"**Note**: Unchanged environment sections (like file lists, open tabs) omitted this turn to save tokens. They haven't changed since your last turn — you already have that information. Only use tools if you need to CHECK for new changes or get updated data.",
 		)
 	}
 

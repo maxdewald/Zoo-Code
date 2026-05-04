@@ -45,25 +45,25 @@ export function generatePlaceholder(toolName: string, originalContent: string): 
 	switch (toolName) {
 		case "read_file": {
 			const lineCount = countApproxLines(originalContent)
-			return `[Compressed: read_file result — originally ~${formattedCount} chars, ~${lineCount} lines. Re-read the file if you need its contents.]`
+			return `[OLD RESULT - COMPRESSED FOR TOKENS: This read_file result from 3+ turns ago contained ~${formattedCount} chars (~${lineCount} lines). It was automatically compressed to save context window space. If you still need this file's contents for your current task, call read_file again to get fresh data. Otherwise, continue with your task using information from more recent tool calls.]`
 		}
 		case "search_files":
 		case "codebase_search": {
 			// Estimate matches by counting lines that look like match results
 			const lineCount = countApproxLines(originalContent)
-			return `[Compressed: ${toolName} result — originally ~${formattedCount} chars, ~${lineCount} matches. Re-run the search if needed.]`
+			return `[OLD RESULT - COMPRESSED FOR TOKENS: This ${toolName} result from 3+ turns ago contained ~${formattedCount} chars (~${lineCount} matches). It was automatically compressed to save context window space. If you still need these search results for your current task, re-run the search. Otherwise, continue with your task using information from more recent tool calls.]`
 		}
 		case "list_files": {
 			// Count approximate number of paths (non-empty lines)
 			const pathCount = originalContent.split("\n").filter((l) => l.trim().length > 0).length
-			return `[Compressed: list_files result — originally ~${formattedCount} chars, ~${pathCount} paths. Re-list the directory if needed.]`
+			return `[OLD RESULT - COMPRESSED FOR TOKENS: This list_files result from 3+ turns ago contained ~${pathCount} paths (~${formattedCount} chars). It was automatically compressed to save context window space. If you still need this directory listing for your current task, call list_files again. Otherwise, continue with your task using information from more recent tool calls.]`
 		}
 		case "execute_command":
 		case "read_command_output": {
-			return `[Compressed: execute_command output — originally ~${formattedCount} chars. Re-run the command if needed.]`
+			return `[OLD RESULT - COMPRESSED FOR TOKENS: This execute_command output from 3+ turns ago contained ~${formattedCount} chars. It was automatically compressed to save context window space. If you still need this command output for your current task, re-run the command. Otherwise, continue with your task using information from more recent tool calls.]`
 		}
 		default: {
-			return `[Compressed: tool result — originally ~${formattedCount} chars. Call the tool again if needed.]`
+			return `[OLD RESULT - COMPRESSED FOR TOKENS: This tool result from 3+ turns ago contained ~${formattedCount} chars. It was automatically compressed to save context window space. If you still need this information for your current task, call the tool again. Otherwise, continue with your task using information from more recent tool calls.]`
 		}
 	}
 }

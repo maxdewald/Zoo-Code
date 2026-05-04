@@ -108,7 +108,6 @@ import { RooProtectedController } from "../protect/RooProtectedController"
 import { type AssistantMessageContent, presentAssistantMessage } from "../assistant-message"
 import { NativeToolCallParser } from "../assistant-message/NativeToolCallParser"
 import { manageContext, willManageContext } from "../context-management"
-import { compressOldToolResults } from "../context-management/compressToolResults"
 import { ClineProvider } from "../webview/ClineProvider"
 import { MultiSearchReplaceDiffStrategy } from "../diff/strategies/multi-search-replace"
 import {
@@ -120,11 +119,6 @@ import {
 	taskMetadata,
 } from "../task-persistence"
 import { getEnvironmentDetails } from "../environment/getEnvironmentDetails"
-import {
-	parseEnvironmentSections,
-	diffEnvironmentDetails,
-	assembleEnvironmentDetails,
-} from "../environment/environmentDiff"
 import { checkContextWindowExceededError } from "../context/context-management/context-error-handling"
 import {
 	type CheckpointDiffOptions,
@@ -584,20 +578,25 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		this.completionPostProcessor = new CompletionPostProcessor(null)
 
 		// Resolve compression handler asynchronously (checks subscription via Zoo Code API)
+		// Only if the llmCompression experiment is enabled (defaults to true when key exists)
 		const zooCodeApiKey = provider.contextProxy?.getSecret("zooCodeApiKey") as string | undefined
-		const zooCodeBaseUrl = (provider.getValue?.("zooCodeBaseUrl") as string | undefined) ?? "https://zoocode.dev"
+		const zooCodeBaseUrl =
+			(provider.getValue?.("zooCodeBaseUrl") as string | undefined) ?? "https://www.zoocode.dev"
+		const llmCompressionEnabled = experimentsConfig?.llmCompression !== false // Default to true if not explicitly disabled
 
-		resolveCompressionHandler(zooCodeApiKey, zooCodeBaseUrl)
-			.then((handler) => {
-				this.toolResultProcessor = new ToolResultProcessor(handler)
-				this.completionPostProcessor = new CompletionPostProcessor(handler)
-				if (handler) {
-					this.toolResultProcessorConfig = { ...this.toolResultProcessorConfig, isSubscriber: true }
-				}
-			})
-			.catch(() => {
-				// Keep null processors on error — graceful degradation
-			})
+		if (llmCompressionEnabled) {
+			resolveCompressionHandler(zooCodeApiKey, zooCodeBaseUrl)
+				.then((handler) => {
+					this.toolResultProcessor = new ToolResultProcessor(handler)
+					this.completionPostProcessor = new CompletionPostProcessor(handler)
+					if (handler) {
+						this.toolResultProcessorConfig = { ...this.toolResultProcessorConfig, isSubscriber: true }
+					}
+				})
+				.catch(() => {
+					// Keep null processors on error — graceful degradation
+				})
+		}
 
 		// Initialize todo list if provided
 		if (initialTodos && initialTodos.length > 0) {
@@ -2690,14 +2689,8 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 
 			const rawEnvironmentDetails = await getEnvironmentDetails(this, currentIncludeFileDetails)
 
-			// Diff environment details to avoid resending unchanged sections on turn 2+.
-			const currentSections = parseEnvironmentSections(rawEnvironmentDetails)
-			const { sections: filteredSections, wasFiltered } = diffEnvironmentDetails(
-				this.lastEnvironmentSections,
-				currentSections,
-			)
-			this.lastEnvironmentSections = currentSections
-			const environmentDetails = assembleEnvironmentDetails(filteredSections, wasFiltered)
+			// Use full environment details every turn
+			const environmentDetails = rawEnvironmentDetails
 
 			// Remove any existing environment_details blocks before adding fresh ones.
 			// This prevents duplicate environment details when resuming tasks,
@@ -4347,15 +4340,14 @@ export class Task extends EventEmitter<TaskEvents> implements TaskLike {
 		// Reset the flag after using it
 		this.skipPrevResponseIdOnce = false
 
-		// Before the API call, compress old tool results for token savings.
-		// We compress a copy (cleanConversationHistory is already derived from the stored history),
-		// so this.apiConversationHistory remains intact for the UI and persistence.
-		const compressedHistory = compressOldToolResults(
+		// Send clean conversation history without aggressive compression
+		// (Subscriber-gated LLM compression happens inside compressAndPushToolResult per-tool)
+		// Cast to MessageParam[] as the provider accepts reasoning items alongside standard messages
+		const stream = this.api.createMessage(
+			systemPrompt,
 			cleanConversationHistory as unknown as Anthropic.Messages.MessageParam[],
+			metadata,
 		)
-
-		// The provider accepts reasoning items alongside standard messages; cast to the expected parameter type.
-		const stream = this.api.createMessage(systemPrompt, compressedHistory, metadata)
 		const iterator = stream[Symbol.asyncIterator]()
 
 		// Set up abort handling - when the signal is aborted, clean up the controller reference

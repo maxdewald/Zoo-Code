@@ -14,7 +14,7 @@ const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour
  */
 export async function resolveCompressionHandler(
 	zooCodeApiKey: string | undefined,
-	baseUrl: string = "https://zoocode.dev",
+	baseUrl: string = "https://www.zoocode.dev",
 ): Promise<ApiHandler | null> {
 	if (!zooCodeApiKey?.trim()) {
 		return null
@@ -30,7 +30,9 @@ export async function resolveCompressionHandler(
 
 	// Fetch subscription status
 	try {
-		const response = await fetch(`${baseUrl}/api/subscription/status`, {
+		const url = `${baseUrl}/api/subscription/status`
+		const response = await fetch(url, {
+			method: "GET",
 			headers: { Authorization: `Bearer ${key}` },
 			signal: AbortSignal.timeout(5_000),
 		})
@@ -46,9 +48,8 @@ export async function resolveCompressionHandler(
 
 		subscriptionCache.set(key, { isSubscriber, expiresAt: Date.now() + CACHE_TTL_MS })
 		return isSubscriber ? new ZooGatewayApiHandler(baseUrl, key) : null
-	} catch (err) {
+	} catch {
 		// Network error — fail open (don't block task startup)
-		console.warn("[resolveCompressionHandler] Failed to check subscription status:", err)
 		return null
 	}
 }

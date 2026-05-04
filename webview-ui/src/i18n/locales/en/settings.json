@@ -882,6 +882,10 @@
 			"refreshSuccess": "Tools refreshed successfully",
 			"refreshError": "Failed to refresh tools",
 			"toolParameters": "Parameters"
+		},
+		"LLM_COMPRESSION": {
+			"name": "Enable LLM compression",
+			"description": "When enabled and you have a Zoo Code API key, large tool results are compressed using an LLM before being sent to the model. This can reduce token usage and costs for subscribers. Disable to compare costs with vs. without compression."
 		}
 	},
 	"promptCaching": {

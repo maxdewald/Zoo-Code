@@ -91,6 +91,18 @@ export const anthropicModels = {
 			},
 		],
 	},
+	"claude-opus-4-7": {
+		maxTokens: 128_000, // Overridden to 8k if `enableReasoningEffort` is false.
+		contextWindow: 1_000_000, // 1M tokens native context window (no beta flag required)
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 5.5, // $5.50 per million input tokens
+		outputPrice: 27.5, // $27.50 per million output tokens
+		cacheWritesPrice: 6.875, // $6.88 per million tokens (1.25x input)
+		cacheReadsPrice: 0.55, // $0.55 per million tokens (10% of input)
+		supportsReasoningBudget: true,
+		description: "Claude Opus 4.7 - Released April 16, 2026 with 1M native context window",
+	},
 	"claude-opus-4-5-20251101": {
 		maxTokens: 32_000, // Overridden to 8k if `enableReasoningEffort` is false.
 		contextWindow: 200_000,
