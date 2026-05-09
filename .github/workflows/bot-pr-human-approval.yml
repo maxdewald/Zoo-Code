@@ -2,7 +2,9 @@ name: Bot PR human approval gate
 
 on:
     pull_request_target:
-        types: [opened, reopened, ready_for_review, synchronize]
+        types: [opened, reopened, synchronize]
+    pull_request:
+        types: [ready_for_review, converted_to_draft]
     pull_request_review:
         types: [submitted, dismissed]
 
@@ -40,7 +42,9 @@ jobs:
                       }
 
                       if (pullRequest.draft) {
-                      	core.notice(`Skipping approval gate for draft bot PR #${pullRequest.number}.`)
+                      	core.setFailed(
+                      		`Bot PR #${pullRequest.number} is still a draft. Mark it ready for review and collect ${minimumHumanApprovals} human approvals on the current head to satisfy this gate.`,
+                      	)
                       	return
                       }
 
