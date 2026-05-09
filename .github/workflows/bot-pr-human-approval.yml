@@ -1,0 +1,84 @@
+name: Bot PR human approval gate
+
+on:
+    pull_request_target:
+        types: [opened, reopened, ready_for_review, synchronize]
+    pull_request_review:
+        types: [submitted, dismissed]
+
+concurrency:
+    group: bot-pr-human-approval-${{ github.event.pull_request.number }}
+    cancel-in-progress: true
+
+permissions:
+    pull-requests: read
+
+jobs:
+    require-human-approvals:
+        name: Require 2 human approvals for bot PRs
+        runs-on: ubuntu-latest
+        steps:
+            - name: Evaluate bot PR approvals
+              uses: actions/github-script@v7
+              with:
+                  script: |
+                      const minimumHumanApprovals = 2
+                      const pullRequest = context.payload.pull_request
+
+                      if (!pullRequest) {
+                      	core.setFailed("This workflow requires a pull request payload.")
+                      	return
+                      }
+
+                      const authorLogin = pullRequest.user?.login ?? "unknown"
+                      const isBotAuthor =
+                      	pullRequest.user?.type === "Bot" || authorLogin.endsWith("[bot]")
+
+                      if (!isBotAuthor) {
+                      	core.notice(`Skipping approval gate because ${authorLogin} is not a bot account.`)
+                      	return
+                      }
+
+                      if (pullRequest.draft) {
+                      	core.notice(`Skipping approval gate for draft bot PR #${pullRequest.number}.`)
+                      	return
+                      }
+
+                      const reviews = await github.paginate(github.rest.pulls.listReviews, {
+                      	owner: context.repo.owner,
+                      	repo: context.repo.repo,
+                      	pull_number: pullRequest.number,
+                      	per_page: 100,
+                      })
+
+                      const opinionatedStates = new Set(["APPROVED", "CHANGES_REQUESTED", "DISMISSED"])
+                      const latestOpinionatedReviewByUser = new Map()
+
+                      for (const review of reviews) {
+                      	if (!review.user?.login || !review.submitted_at || !opinionatedStates.has(review.state)) {
+                      		continue
+                      	}
+
+                      	const priorReview = latestOpinionatedReviewByUser.get(review.user.login)
+                      	if (!priorReview || new Date(review.submitted_at) >= new Date(priorReview.submitted_at)) {
+                      		latestOpinionatedReviewByUser.set(review.user.login, review)
+                      	}
+                      }
+
+                      const humanApprovals = [...latestOpinionatedReviewByUser.values()].filter((review) => {
+                      	return review.state === "APPROVED" && review.user?.type === "User"
+                      })
+
+                      if (humanApprovals.length < minimumHumanApprovals) {
+                      	const approverList =
+                      		humanApprovals.map((review) => `@${review.user.login}`).join(", ") || "none yet"
+
+                      	core.setFailed(
+                      		`Bot PR #${pullRequest.number} has ${humanApprovals.length}/${minimumHumanApprovals} human approvals. Current human approvers: ${approverList}.`,
+                      	)
+                      	return
+                      }
+
+                      core.notice(
+                      	`Bot PR #${pullRequest.number} has ${humanApprovals.length} human approvals and satisfies the gate.`,
+                      )
