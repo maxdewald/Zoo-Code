@@ -65,8 +65,13 @@ jobs:
                       	}
                       }
 
+                      const currentHeadSha = pullRequest.head?.sha
                       const humanApprovals = [...latestOpinionatedReviewByUser.values()].filter((review) => {
-                      	return review.state === "APPROVED" && review.user?.type === "User"
+                      	return (
+                      		review.state === "APPROVED" &&
+                      		review.user?.type === "User" &&
+                      		review.commit_id === currentHeadSha
+                      	)
                       })
 
                       if (humanApprovals.length < minimumHumanApprovals) {
