@@ -5,6 +5,8 @@ import * as fs from "fs/promises"
 import { runTests } from "@vscode/test-electron"
 import { LLMock } from "@copilotkit/aimock"
 
+import { addReadFileResultFixtures } from "./fixtures/read-file"
+
 async function main() {
 	const isRecord = process.env.AIMOCK_RECORD === "true"
 
@@ -55,6 +57,8 @@ async function main() {
 			mock.loadFixtureDir(fixturesDir)
 
 			if (!isRecord) {
+				addReadFileResultFixtures(mock)
+
 				// The modes test (switch_mode → ask) triggers a second API call whose last
 				// user message starts with <environment_details> directly — no <user_message>
 				// wrapper. JSON fixtures use substring matching so a bare "<environment_details>"
