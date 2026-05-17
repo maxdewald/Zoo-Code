@@ -323,7 +323,7 @@ The search should find matches across different file types and provide context f
 					alwaysAllowReadOnly: true,
 					alwaysAllowReadOnlyOutsideWorkspace: true,
 				},
-				text: "SEARCH_FILES_FUNCTIONS_SMOKE",
+				text: "Search the search-files-tool-fixture directory for JavaScript function declarations using the regex function\\s+\\w+ and report the function names you find.",
 			})
 
 			console.log("Task ID:", taskId)
@@ -379,7 +379,7 @@ The search should find matches across different file types and provide context f
 					alwaysAllowReadOnly: true,
 					alwaysAllowReadOnlyOutsideWorkspace: true,
 				},
-				text: "SEARCH_FILES_TODO_SMOKE",
+				text: "Search the search-files-tool-fixture directory for TODO comments using the regex TODO.* and report the matching TODO entries.",
 			})
 
 			// Wait for task completion
@@ -433,7 +433,7 @@ The search should find matches across different file types and provide context f
 					alwaysAllowReadOnly: true,
 					alwaysAllowReadOnlyOutsideWorkspace: true,
 				},
-				text: "SEARCH_FILES_TYPESCRIPT_SMOKE",
+				text: "Search for interface definitions using the regex interface\\s+\\w+ with file_pattern *.ts in the search-files-tool-fixture directory and report the TypeScript interfaces you find.",
 			})
 
 			// Wait for task completion
@@ -485,7 +485,7 @@ The search should find matches across different file types and provide context f
 					alwaysAllowReadOnly: true,
 					alwaysAllowReadOnlyOutsideWorkspace: true,
 				},
-				text: "SEARCH_FILES_JSON_SMOKE",
+				text: 'Search for JSON configuration keys using the regex "\\w+":\\s* with file_pattern *.json in the search-files-tool-fixture directory and report the keys you find.',
 			})
 
 			// Wait for task completion
@@ -540,7 +540,7 @@ The search should find matches across different file types and provide context f
 					alwaysAllowReadOnly: true,
 					alwaysAllowReadOnlyOutsideWorkspace: true,
 				},
-				text: "SEARCH_FILES_NESTED_SMOKE",
+				text: "Search for the utility functions formatCurrency and debounce using the regex function\\s+(format|debounce) in the search-files-tool-fixture directory and report what you find in the nested subdirectory.",
 			})
 
 			// Wait for task completion
@@ -592,7 +592,7 @@ The search should find matches across different file types and provide context f
 					alwaysAllowReadOnly: true,
 					alwaysAllowReadOnlyOutsideWorkspace: true,
 				},
-				text: "SEARCH_FILES_COMPLEX_REGEX_SMOKE",
+				text: "Search for import and export statements using the regex (import|export).* with file_pattern *.{js,ts} in the search-files-tool-fixture directory and report the module exports you find.",
 			})
 
 			// Wait for task completion
@@ -649,7 +649,7 @@ The search should find matches across different file types and provide context f
 					alwaysAllowReadOnly: true,
 					alwaysAllowReadOnlyOutsideWorkspace: true,
 				},
-				text: "SEARCH_FILES_NO_MATCH_SMOKE",
+				text: "Search the search-files-tool-fixture directory for nonExistentPattern12345 and report that there are no matches if the regex finds nothing.",
 			})
 
 			// Wait for task completion
@@ -724,7 +724,7 @@ The search should find matches across different file types and provide context f
 					alwaysAllowReadOnly: true,
 					alwaysAllowReadOnlyOutsideWorkspace: true,
 				},
-				text: "SEARCH_FILES_CLASS_METHOD_SMOKE",
+				text: "Search the search-files-tool-fixture directory for TypeScript class definitions and async methods using the regex (class\\s+\\w+|async\\s+\\w+) with file_pattern *.ts, then report what you find.",
 			})
 
 			// Wait for task completion

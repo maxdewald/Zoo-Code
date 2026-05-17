@@ -3,7 +3,7 @@
 	"displayName": "%extension.displayName%",
 	"description": "%extension.description%",
 	"publisher": "ZooCodeOrganization",
-	"version": "3.54.0",
+	"version": "3.54.1",
 	"icon": "assets/icons/icon.png",
 	"galleryBanner": {
 		"color": "#617A91",
@@ -11,7 +11,7 @@
 	},
 	"engines": {
 		"vscode": "^1.84.0",
-		"node": "20.19.2"
+		"node": "20.20.2"
 	},
 	"author": {
 		"name": "Zoo Code"
@@ -20,7 +20,7 @@
 		"type": "git",
 		"url": "https://github.com/Zoo-Code-Org/Zoo-Code"
 	},
-	"homepage": "https://github.com/Zoo-Code-Org/Zoo-Code",
+	"homepage": "https://zoocode.dev",
 	"categories": [
 		"AI",
 		"Chat",
@@ -481,7 +481,7 @@
 		"gray-matter": "^4.0.3",
 		"i18next": "^25.0.0",
 		"ignore": "^7.0.3",
-		"isbinaryfile": "^5.0.2",
+		"isbinaryfile": "^5.0.7",
 		"json-stream-stringify": "^3.1.6",
 		"jwt-decode": "^4.0.0",
 		"lodash.debounce": "^4.0.8",
