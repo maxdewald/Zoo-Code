@@ -129,9 +129,12 @@ suite("Roo Code use_mcp_tool Tool", function () {
 
 			if (message.type === "ask" && message.ask === "use_mcp_server" && message.text && !mcpRequest) {
 				try {
-					mcpRequest = JSON.parse(message.text) as ParsedMcpRequest
+					const parsed = JSON.parse(message.text) as ParsedMcpRequest
+					if (parsed.serverName && parsed.toolName) {
+						mcpRequest = parsed
+					}
 				} catch {
-					mcpRequest = null
+					// Ignore partial JSON; a later complete ask will overwrite.
 				}
 			}
 
