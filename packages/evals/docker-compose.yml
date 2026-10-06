@@ -16,7 +16,7 @@
 services:
     db:
         container_name: evals-db
-        image: postgres:15.4
+        image: postgres:15.4@sha256:d1168ad5397bf9c94cc417c530469805a8767ed585481d93f174461ac8557e3a
         ports:
             - "${EVALS_DB_PORT:-5432}:5432"
         volumes:
@@ -37,7 +37,7 @@ services:
 
     redis:
         container_name: evals-redis
-        image: redis:7-alpine
+        image: redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
         ports:
             - "${EVALS_REDIS_PORT:-6379}:6379"
         volumes:
