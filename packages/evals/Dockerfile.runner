@@ -4,7 +4,7 @@
 # Test with:
 # docker compose -f packages/evals/docker-compose.yml run --rm runner bash
 
-FROM debian:bookworm-slim AS base
+FROM debian:bookworm-slim@sha256:7ff6ba31527b9e336162fa061746c366c4b2032f4d2cff2078bea43f78efe3f8 AS base
 
 # Install system packages (excluding language runtimes - those come from mise)
 RUN apt-get update && \
